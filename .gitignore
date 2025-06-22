@@ -1,0 +1,45 @@
+# Ignore node_modules everywhere
+**/node_modules
+
+# Output folders
+**/dist
+**/.turbo
+**/.next
+**/build
+**/.vite
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+**/.env
+**/.env.*
+
+# OS/system files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript cache
+**/*.tsbuildinfo
+
+# Jest coverage
+**/coverage
+
+# Turborepo
+.turbo
+
+# pnpm store
+.pnpm-store
+
+# GitHub-specific
+.gitattributes
