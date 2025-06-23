@@ -25,7 +25,8 @@
     "@nestjs/platform-express": "^11.0.1",
     "codegen": "workspace:^",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "vm2": "^3.9.19"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
