@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "pnpm turbo run dev",
     "build": "pnpm turbo run build",
-    "lint": "pnpm turbo run lint"
+    "lint": "pnpm turbo run lint",
+    "build:codegen": "pnpm --filter=codegen build"
   },
   "devDependencies": {
     "turbo": "^2.5.4"
