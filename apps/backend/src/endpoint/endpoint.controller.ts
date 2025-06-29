@@ -3,54 +3,129 @@
 import {
   Body,
   Controller,
+  Query,
+  Get,
   Post,
-  Req,
-  Res,
-  All,
+  Put,
+  Delete,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { EndpointStore, Endpoint } from '../endpoint.store';
-import { VM } from 'vm2';
+import { Endpoint } from '../endpoint.store';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
-@Controller('api')
+@Controller('dyan')
 export class EndpointController {
-  // Route to save a new endpoint
-  @Post('endpoint')
-  addEndpoint(@Body() body: Endpoint) {
-    // Normalize path by removing leading /api if present
-    const cleanPath = body.path.replace(/^\/api/, '');
-    EndpointStore.add({ ...body, path: cleanPath });
-    return { message: 'Endpoint saved successfully' };
+  // Add this inside the @Controller('api') class:
+  @Get('endpoints')
+  async getAllEndpoints() {
+    const endpoints = await prisma.endpoint.findMany({
+      orderBy: { id: 'desc' },
+      select: {
+        id: true,
+        path: true,
+        method: true,
+        language: true,
+      },
+    });
+    return endpoints;
   }
 
-  // Catch-all route for any saved dynamic endpoint
-  @All('*')
-  async handleDynamic(@Req() req: Request, @Res() res: Response) {
-    const normalizedPath = req.path.replace(/^\/api/, '');
-
-    console.log('Incoming request to:', req.path, req.method);
-    console.log('Normalized path:', normalizedPath);
-    console.log('Stored endpoints:', EndpointStore['endpoints']);
-
-    const match = EndpointStore.find(normalizedPath, req.method);
+  // GET /api/endpoint?path=/your/path&method=POST
+  @Get('endpoint')
+  async getSingleEndpoint(
+    @Query('path') path: string,
+    @Query('method') method: string,
+  ) {
+    const cleanPath = path.replace(/^\/api/, '');
+    const match = await prisma.endpoint.findFirst({
+      where: {
+        path: cleanPath,
+        method,
+      },
+    });
 
     if (!match) {
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
 
-    try {
-      if (match.language === 'javascript') {
-        res.status(200).json({ message: 'Dummy response for JavaScript endpoint' });
-      } else if (match.language === 'python') {
-        res.status(501).send('Python execution not yet implemented');
-      } else {
-        res.status(400).send('Unsupported language');
-      }
-    } catch (err) {
-      console.error('Execution error:', err);
-      res.status(500).send(`Error executing logic: ${err}`);
+    return match;
+  }
+
+  // Save a new endpoint
+  @Post('endpoint')
+  async addEndpoint(@Body() body: Endpoint) {
+    const cleanPath = body.path.replace(/^\/api/, '');
+
+    const existing = await prisma.endpoint.findFirst({
+      where: {
+        path: cleanPath,
+        method: body.method,
+      },
+    });
+
+    if (existing) {
+      await prisma.endpoint.update({
+        where: { id: existing.id },
+        data: {
+          language: body.language,
+          code: body.code,
+        },
+      });
+    } else {
+      await prisma.endpoint.create({
+        data: {
+          path: cleanPath,
+          method: body.method,
+          language: body.language,
+          code: body.code,
+        },
+      });
     }
+
+    return { message: 'Endpoint saved to DB' };
+  }
+
+  @Put('endpoint')
+  async updateEndpoint(@Body() body: Endpoint) {
+    const cleanPath = body.path.replace(/^\/api/, '');
+
+    const existing = await prisma.endpoint.findFirst({
+      where: { path: cleanPath, method: body.method },
+    });
+
+    if (!existing) {
+      throw new HttpException('Endpoint not found', HttpStatus.NOT_FOUND);
+    }
+
+    const updated = await prisma.endpoint.update({
+      where: { id: existing.id },
+      data: {
+        language: body.language,
+        code: body.code,
+      },
+    });
+
+    return { message: 'Endpoint updated', endpoint: updated };
+  }
+
+  @Delete('endpoint')
+  async deleteEndpoint(@Body() body: { path: string; method: string }) {
+    const cleanPath = body.path.replace(/^\/api/, '');
+
+    const existing = await prisma.endpoint.findFirst({
+      where: { path: cleanPath, method: body.method },
+    });
+
+    if (!existing) {
+      throw new HttpException('Endpoint not found', HttpStatus.NOT_FOUND);
+    }
+
+    await prisma.endpoint.delete({
+      where: { id: existing.id },
+    });
+
+    return { message: 'Endpoint deleted successfully' };
   }
 }
