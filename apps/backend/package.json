@@ -22,9 +22,13 @@
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/client": "^6.10.1",
+    "@types/nodemailer": "^6.4.17",
     "codegen": "workspace:^",
+    "cookie-parser": "^1.4.7",
+    "nodemailer": "^7.0.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "uuid": "^11.1.0",

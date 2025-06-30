@@ -32,7 +32,7 @@ export default function BuilderPage() {
   useEffect(() => {
     const loadEndpoints = async () => {
       try {
-        const res = await fetch("http://localhost:3000/dyan/endpoints", {
+        const res = await fetch("prisma.user./dyan/endpoints", {
           credentials: "include",
         });
         const data = await res.json();
@@ -55,7 +55,7 @@ export default function BuilderPage() {
 
     const methodType = existing ? "PUT" : "POST";
 
-    const res = await fetch("http://localhost:3000/dyan/endpoint", {
+    const res = await fetch("prisma.user./dyan/endpoint", {
       method: methodType,
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -90,8 +90,7 @@ export default function BuilderPage() {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/dyan/endpoint?path=${encodeURIComponent(ep.path)}&method=${ep.method}`,
-        {
+        `prisma.user./dyan/endpoint?path=${encodeURIComponent(ep.path)}&method=${ep.method}`, {
           credentials: "include",
         }
       );
@@ -107,9 +106,8 @@ export default function BuilderPage() {
     const ep = endpoints[index];
 
     try {
-      await fetch("http://localhost:3000/dyan/endpoint", {
+      await fetch("prisma.user./dyan/endpoint", {
         method: "DELETE",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           path: ep.path.replace(/^\/api/, ""),
@@ -142,7 +140,7 @@ export default function BuilderPage() {
 
     try {
       const queryParams = new URLSearchParams(JSON.parse(liveQuery)).toString();
-      const targetUrl = `http://localhost:3000${path}${queryParams ? `?${queryParams}` : ""}`;
+      const targetUrl = `prisma.user.${path}${queryParams ? `?${queryParams}` : ""}`;
 
       const res = await fetch(targetUrl, {
         method,
@@ -164,20 +162,6 @@ export default function BuilderPage() {
       setTestResponse(`Error: ${err.message}`);
     } finally {
       setIsTesting(false);
-    }
-  };
-
-  // Add a simple logout handler (customize as needed)
-  const handleLogout = async () => {
-    try {
-      await fetch("http://localhost:3000/dyan/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      window.location.href = "/";
-    } catch (err) {
-      alert("Logout failed.");
-      console.error("Logout error:", err);
     }
   };
 
@@ -217,9 +201,6 @@ export default function BuilderPage() {
             >
               <Save className="w-4 h-4" />
               Save
-            </Button>
-            <Button variant="outline" onClick={handleLogout}>
-              Logout
             </Button>
           </div>
         </div>
