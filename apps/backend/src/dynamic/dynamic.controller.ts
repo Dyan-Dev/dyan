@@ -14,10 +14,6 @@ export class DynamicController {
   async handleDynamic(@Req() req: Request, @Res() res: Response) {
     const normalizedPath = req.path.replace(/^\/api/, '');
 
-    console.log('Incoming request to:', req.path, req.method);
-    console.log('Normalized path:', normalizedPath);
-    console.log('Stored endpoints:', EndpointStore['endpoints']);
-
     const match = await prisma.endpoint.findFirst({
       where: {
         path: normalizedPath,
