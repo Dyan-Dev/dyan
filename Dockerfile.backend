@@ -1,0 +1,20 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY . .
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+RUN pnpm install --frozen-lockfile
+
+WORKDIR /app/apps/backend
+
+COPY apps/backend/.env .env
+
+RUN pnpm --filter backend exec prisma generate
+RUN pnpm --filter backend exec prisma migrate deploy
+
+RUN pnpm --filter backend build
+
+CMD ["pnpm", "--filter", "backend", "start:prod"]

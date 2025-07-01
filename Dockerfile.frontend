@@ -1,0 +1,24 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+RUN pnpm install --frozen-lockfile
+
+WORKDIR /app/apps/frontend
+
+RUN pnpm build
+
+# ---- Serve static build using nginx ----
+FROM nginx:alpine
+
+COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,7 +1,7 @@
 // File: apps/frontend/components/LiveIOPanel.tsx
 import { useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
 
 interface Props {
   onChange: (data: { body: string; headers: string; query: string }) => void;
@@ -24,7 +24,7 @@ export function LiveIOPanel({ onChange }: Props) {
           className="font-mono text-sm"
           rows={4}
           value={body}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setBody(e.target.value);
             handleChange();
           }}
@@ -36,7 +36,7 @@ export function LiveIOPanel({ onChange }: Props) {
           className="font-mono text-sm"
           rows={2}
           value={headers}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setHeaders(e.target.value);
             handleChange();
           }}
@@ -48,7 +48,7 @@ export function LiveIOPanel({ onChange }: Props) {
           className="font-mono text-sm"
           rows={2}
           value={query}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setQuery(e.target.value);
             handleChange();
           }}

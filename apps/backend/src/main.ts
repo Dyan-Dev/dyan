@@ -1,14 +1,18 @@
 import * as cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ConfigModule } from '@nestjs/config';
 
 async function bootstrap() {
+  ConfigModule.forRoot({
+    envFilePath: ['../../.env', '.env'],
+    isGlobal: true,
+  });
+
   const app = await NestFactory.create(AppModule);
 
-  // 👇 Use cookie-parser before anything else
   app.use(cookieParser());
 
-  // 👇 CORS setup to allow cookies from frontend
   app.enableCors({
     origin: 'http://localhost:5173',
     credentials: true,

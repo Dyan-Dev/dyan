@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Save, Settings, Play } from "lucide-react";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Label } from "../components/ui/label";
+import { Save, Play } from "lucide-react";
 import SavedEndpointsSidebar from "../components/SavedEndpointsSidebar";
 import type { Endpoint } from "../components/SavedEndpointsSidebar";
 import Editor from "@monaco-editor/react";
@@ -16,7 +16,7 @@ export default function BuilderPage() {
   const [language, setLanguage] = useState<"javascript" | "python">(
     "javascript"
   );
-  const [code, setCode] = useState(boilerplate[language]);
+  const [code, setCode] = useState(boilerplate(language));
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint | null>(
     null
@@ -62,7 +62,7 @@ export default function BuilderPage() {
       body: JSON.stringify({ path: normalizedPath, method, language, code }),
     });
 
-    const data = await res.json();
+    await res.json();
     alert(existing ? "Endpoint updated!" : "Endpoint saved!");
 
     const newEp = { path, method, language };
@@ -99,7 +99,7 @@ export default function BuilderPage() {
       if (data.code) setCode(data.code);
       setSelectedEndpoint(data);
     } catch {
-      setCode(boilerplate[ep.language]);
+      setCode(boilerplate(ep.language));
     }
   };
 
@@ -126,7 +126,7 @@ export default function BuilderPage() {
         setPath("/api/hello");
         setMethod("GET");
         setLanguage("javascript");
-        setCode(boilerplate["javascript"]);
+        setCode(boilerplate("javascript"));
       }
 
       alert("Endpoint deleted");
@@ -260,7 +260,7 @@ export default function BuilderPage() {
                   onChange={(e) => {
                     const lang = e.target.value as "javascript" | "python";
                     setLanguage(lang);
-                    setCode(boilerplate[lang]); // reset boilerplate when language changes
+                    setCode(boilerplate(lang)); // reset boilerplate when language changes
                   }}
                   className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm"
                 >

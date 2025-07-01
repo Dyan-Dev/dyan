@@ -1,7 +1,7 @@
 // File: apps/frontend/components/SavedEndpointsSidebar.tsx
 
-import { Button } from "@/components/ui/button";
-import { PlusCircle, Pencil, Copy, Trash2, Settings, Zap } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { PlusCircle, Pencil, Trash2, Settings } from "lucide-react";
 import { useState } from "react";
 import { boilerplate } from "../lib/utils";
 
