@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Label } from "../components/ui/label";
-import { Save, Play } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Badge } from "../components/ui/badge";
+import { Separator } from "../components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { 
+  Save, 
+  Play, 
+  LogOut, 
+  Code2, 
+  Globe, 
+  Settings, 
+  Zap,
+  CheckCircle,
+  Clock,
+  AlertCircle
+} from "lucide-react";
 import SavedEndpointsSidebar from "../components/SavedEndpointsSidebar";
 import type { Endpoint } from "../components/SavedEndpointsSidebar";
 import Editor from "@monaco-editor/react";
@@ -24,6 +39,7 @@ export default function BuilderPage() {
 
   const [testResponse, setTestResponse] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [liveBody, setLiveBody] = useState("{}");
   const [liveHeaders, setLiveHeaders] = useState("{}");
@@ -46,40 +62,46 @@ export default function BuilderPage() {
   }, []);
 
   const handleSave = async () => {
-    const normalizedPath = path.replace(/^\/api/, "");
+    setIsSaving(true);
+    try {
+      const normalizedPath = path.replace(/^\/api/, "");
 
-    const existing = endpoints.find(
-      (ep) =>
-        ep.path.replace(/^\/api/, "") === normalizedPath && ep.method === method
-    );
+      const existing = endpoints.find(
+        (ep) =>
+          ep.path.replace(/^\/api/, "") === normalizedPath && ep.method === method
+      );
 
-    const methodType = existing ? "PUT" : "POST";
+      const methodType = existing ? "PUT" : "POST";
 
-    const res = await fetch("http://localhost:3000/dyan/endpoint", {
-      method: methodType,
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: normalizedPath, method, language, code }),
-    });
+      const res = await fetch("http://localhost:3000/dyan/endpoint", {
+        method: methodType,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: normalizedPath, method, language, code }),
+      });
 
-    await res.json();
-    alert(existing ? "Endpoint updated!" : "Endpoint saved!");
+      await res.json();
+      
+      const newEp = { path, method, language };
 
-    const newEp = { path, method, language };
+      setEndpoints((prev) => {
+        if (existing) {
+          return prev.map((ep) =>
+            ep.path === existing.path && ep.method === existing.method
+              ? newEp
+              : ep
+          );
+        } else {
+          return [...prev, newEp];
+        }
+      });
 
-    setEndpoints((prev) => {
-      if (existing) {
-        return prev.map((ep) =>
-          ep.path === existing.path && ep.method === existing.method
-            ? newEp
-            : ep
-        );
-      } else {
-        return [...prev, newEp];
-      }
-    });
-
-    setSelectedEndpoint(newEp);
+      setSelectedEndpoint(newEp);
+    } catch (err) {
+      console.error("Save failed:", err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleEdit = async (index: number) => {
@@ -128,11 +150,8 @@ export default function BuilderPage() {
         setLanguage("javascript");
         setCode(boilerplate("javascript"));
       }
-
-      alert("Endpoint deleted");
     } catch (err) {
-      alert("Failed to delete endpoint");
-      console.error(err);
+      console.error("Delete failed:", err);
     }
   };
 
@@ -167,7 +186,6 @@ export default function BuilderPage() {
     }
   };
 
-  // Add a simple logout handler (customize as needed)
   const handleLogout = async () => {
     try {
       await fetch("http://localhost:3000/dyan/auth/logout", {
@@ -176,13 +194,22 @@ export default function BuilderPage() {
       });
       window.location.href = "/";
     } catch (err) {
-      alert("Logout failed.");
       console.error("Logout error:", err);
     }
   };
 
+  const getMethodColor = (method: string) => {
+    switch (method) {
+      case "GET": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+      case "POST": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+      case "PUT": return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300";
+      case "DELETE": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+      default: return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+    }
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Sidebar */}
       <SavedEndpointsSidebar
         endpoints={endpoints}
@@ -196,113 +223,228 @@ export default function BuilderPage() {
       />
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Dyan: API Builder
-          </h1>
-          <div className="flex gap-2">
-            <Button
-              onClick={handleTest}
-              variant="outline"
-              className="gap-1"
-              disabled={!selectedEndpoint}
-            >
-              <Play className="w-4 h-4" />
-              Test
-            </Button>
-            <Button
-              onClick={handleSave}
-              className="bg-black text-white hover:bg-gray-800 gap-1"
-            >
-              <Save className="w-4 h-4" />
-              Save
-            </Button>
-            <Button variant="outline" onClick={handleLogout}>
-              Logout
-            </Button>
+      <div className="flex-1 overflow-auto">
+        {/* Header */}
+        <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
+          <div className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Code2 className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+                    API Builder
+                  </h1>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Build and test your endpoints
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleTest}
+                  variant="outline"
+                  size="sm"
+                  disabled={!selectedEndpoint || isTesting}
+                  className="gap-2"
+                >
+                  {isTesting ? (
+                    <Clock className="w-4 h-4 animate-pulse" />
+                  ) : (
+                    <Play className="w-4 h-4" />
+                  )}
+                  {isTesting ? "Testing..." : "Test"}
+                </Button>
+                
+                <Button
+                  onClick={handleSave}
+                  size="sm"
+                  disabled={isSaving}
+                  className="gap-2"
+                >
+                  {isSaving ? (
+                    <Clock className="w-4 h-4 animate-pulse" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  {isSaving ? "Saving..." : "Save"}
+                </Button>
+                
+                <Separator orientation="vertical" className="h-6" />
+                
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleLogout}
+                  className="gap-2 text-slate-600 dark:text-slate-400"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Form */}
-        <Card className="p-4 space-y-4">
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="path">Endpoint Path</Label>
-                <Input
-                  id="path"
-                  value={path}
-                  onChange={(e) => setPath(e.target.value)}
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Endpoint Configuration */}
+          <Card className="shadow-sm border-0 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-medium flex items-center gap-2">
+                  <Settings className="w-5 h-5" />
+                  Endpoint Configuration
+                </CardTitle>
+                {selectedEndpoint && (
+                  <Badge className={getMethodColor(selectedEndpoint.method)}>
+                    {selectedEndpoint.method}
+                  </Badge>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="path" className="text-sm font-medium flex items-center gap-2">
+                    <Globe className="w-4 h-4" />
+                    Endpoint Path
+                  </Label>
+                  <Input
+                    id="path"
+                    value={path}
+                    onChange={(e) => setPath(e.target.value)}
+                    className="h-10"
+                    placeholder="/api/your-endpoint"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">HTTP Method</Label>
+                  <Select value={method} onValueChange={setMethod}>
+                    <SelectTrigger className="h-10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="GET">GET</SelectItem>
+                      <SelectItem value="POST">POST</SelectItem>
+                      <SelectItem value="PUT">PUT</SelectItem>
+                      <SelectItem value="DELETE">DELETE</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Language</Label>
+                  <Select 
+                    value={language} 
+                    onValueChange={(value: "javascript" | "python") => {
+                      setLanguage(value);
+                      setCode(boilerplate(value));
+                    }}
+                  >
+                    <SelectTrigger className="h-10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="javascript">JavaScript</SelectItem>
+                      <SelectItem value="python">Python</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Code Editor */}
+          <Card className="shadow-sm border-0 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-medium flex items-center gap-2">
+                <Code2 className="w-5 h-5" />
+                Function Logic
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="border rounded-lg overflow-hidden">
+                <Editor
+                  height="350px"
+                  defaultLanguage="javascript"
+                  language={language}
+                  value={code}
+                  onChange={(value) => setCode(value || "")}
+                  theme="vs-dark"
+                  options={{
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                    padding: { top: 16, bottom: 16 }
+                  }}
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              <div>
-                <Label htmlFor="method">Method</Label>
-                <select
-                  id="method"
-                  value={method}
-                  onChange={(e) => setMethod(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm"
-                >
-                  <option value="GET">GET</option>
-                  <option value="POST">POST</option>
-                  <option value="PUT">PUT</option>
-                  <option value="DELETE">DELETE</option>
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="language">Language</Label>
-                <select
-                  id="language"
-                  value={language}
-                  onChange={(e) => {
-                    const lang = e.target.value as "javascript" | "python";
-                    setLanguage(lang);
-                    setCode(boilerplate(lang)); // reset boilerplate when language changes
-                  }}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm"
-                >
-                  <option value="javascript">JavaScript</option>
-                  <option value="python">Python</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="code">Logic</Label>
-              <Editor
-                height="300px"
-                defaultLanguage="javascript"
-                language={language}
-                value={code}
-                onChange={(value) => setCode(value || "")}
-                theme="vs-dark"
-              />
-            </div>
-
-            <div>
-              <Label>Live Input</Label>
-              <LiveIOPanel
-                onChange={({ body, headers, query }) => {
-                  setLiveBody(body);
-                  setLiveHeaders(headers);
-                  setLiveQuery(query);
-                }}
-              />
-            </div>
-
-            <div>
-              <Label>Live Response</Label>
-              <div className="bg-black text-green-400 font-mono text-sm p-4 rounded-md min-h-[100px] max-h-[300px] overflow-auto border border-gray-700">
-                {isTesting
-                  ? "Testing..."
-                  : (testResponse ?? "No response yet.")}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Testing Panel */}
+          <Card className="shadow-sm border-0 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-medium flex items-center gap-2">
+                <Zap className="w-5 h-5" />
+                Test & Debug
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="input" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="input">Request Input</TabsTrigger>
+                  <TabsTrigger value="response">Response Output</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="input" className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Request Configuration</Label>
+                    <LiveIOPanel
+                      onChange={({ body, headers, query }) => {
+                        setLiveBody(body);
+                        setLiveHeaders(headers);
+                        setLiveQuery(query);
+                      }}
+                    />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="response" className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-medium">Response</Label>
+                      {testResponse && !isTesting && (
+                        <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                          <CheckCircle className="w-3 h-3" />
+                          Response received
+                        </div>
+                      )}
+                      {isTesting && (
+                        <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+                          <Clock className="w-3 h-3 animate-pulse" />
+                          Testing...
+                        </div>
+                      )}
+                    </div>
+                    <div className="bg-slate-900 text-green-400 font-mono text-sm p-4 rounded-lg min-h-[150px] max-h-[400px] overflow-auto border border-slate-700">
+                      {isTesting
+                        ? "🔄 Executing request..."
+                        : testResponse 
+                        ? testResponse
+                        : "💡 Click 'Test' to see the response output here"}
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
