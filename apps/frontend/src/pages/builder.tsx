@@ -396,7 +396,7 @@ export default function BuilderPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="input" className="space-y-4">
+              <Tabs defaultValue="response" className="space-y-4">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="input">Request Input</TabsTrigger>
                   <TabsTrigger value="response">Response Output</TabsTrigger>
