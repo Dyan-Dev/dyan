@@ -21,7 +21,7 @@
 - 🧱 Visual API builder (define endpoints, methods, DB connections)
 - 🧪 In-browser logic editor (JS/Python sandbox)
 - ⚡ Instant test mode via built-in runtime
-- 🦀 One-click Rust code generation for high-performance deployment
+- 🧩 Rust code generation planned for a future release
 - 📦 Self-hosted & open-source
 
 ---
