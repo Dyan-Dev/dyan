@@ -17,7 +17,6 @@ import {
   Zap,
   CheckCircle,
   Clock,
-  AlertCircle
 } from "lucide-react";
 import SavedEndpointsSidebar from "../components/SavedEndpointsSidebar";
 import type { Endpoint } from "../components/SavedEndpointsSidebar";

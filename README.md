@@ -1,6 +1,19 @@
-# Dyan
+<p align="center">
+  <img src="https://dyan.dev/banner.png" alt="Dyan Logo" width="600"/>
+</p>
 
-**Dyan** is a self-hosted platform that lets you visually build REST APIs from any database, write custom logic in the browser using JavaScript or Python, and generate blazing-fast, production-ready Rust APIs with a single click.
+<h1 align="center">Dyan</h1>
+
+<p align="center">
+  <b>Visually build, test, and export blazing-fast REST APIs from any database</b><br />
+  <a href="https://dyan.dev">🌐 dyan.dev</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/dyan-dev/dyan/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+  <img src="https://img.shields.io/badge/version-0.1.0-yellow.svg" />
+  <img src="https://github.com/dyan-dev/dyan/actions/workflows/build.yml/badge.svg" alt="Build Status" />
+</p>
 
 ---
 
@@ -26,7 +39,7 @@
 
 ## 🚀 Getting Started (Coming Soon)
 
-> Full setup instructions, Docker templates, and CLI will be available here.
+> Full setup instructions, Docker templates, and CLI will be available soon.
 
 ---
 
@@ -41,7 +54,19 @@
 
 ## 🧪 Project Status
 
-This is an early-stage project in active development. We welcome feedback, ideas, and contributors!
+This is an early-stage project in active development.
+
+- ✅ Currently supports: **GET requests**
+- 🚧 Coming soon: Support for POST, PUT, DELETE, and more
+- 💡 We'd love your feedback and help shaping the roadmap!
+
+---
+
+## 🤝 Contributing
+
+We welcome issues, ideas, and contributions from the community!
+
+> **Note:** The current version is limited to GET endpoints. If you'd like to help extend functionality (POST, PUT, DELETE, etc.), feel free to open a PR or issue.
 
 ---
 
