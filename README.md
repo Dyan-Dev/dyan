@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="https://dyan.dev/banner.png" alt="Dyan Logo" width="600"/>
+  <img src="https://dyan.live/banner.png" alt="Dyan Logo" width="600"/>
 </p>
 
 <h1 align="center">Dyan</h1>
 
 <p align="center">
   <b>Visually build, test, and export blazing-fast REST APIs from any database</b><br />
-  <a href="https://dyan.dev">🌐 dyan.dev</a>
+  <a href="https://dyan.live">🌐 dyan.live</a>
 </p>
 
 <p align="center">
