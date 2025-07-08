@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://dyan.live/banner.png" alt="Dyan Logo" width="600"/>
+  <img src="https://dyan.live/banner.png" alt="Dyan Logo" width="100"/>
 </p>
 
 <h1 align="center">Dyan</h1>
