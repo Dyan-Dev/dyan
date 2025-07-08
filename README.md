@@ -12,7 +12,6 @@
 <p align="center">
   <a href="https://github.com/dyan-dev/dyan/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <img src="https://img.shields.io/badge/version-0.1.0-yellow.svg" />
-  <img src="https://github.com/dyan-dev/dyan/actions/workflows/build.yml/badge.svg" alt="Build Status" />
 </p>
 
 ---
