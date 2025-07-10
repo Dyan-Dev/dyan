@@ -42,4 +42,4 @@ Thumbs.db
 
 # GitHub-specific
 .gitattributes
-apps/backend/prisma/dev.db
+apps/backend/prisma/*.db

@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 import { VM } from 'vm2';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
-import { EndpointStore } from '../endpoint.store';
 const prisma = new PrismaClient();
 
 @Controller('api')
@@ -26,35 +25,47 @@ export class DynamicController {
     }
 
     try {
-      if (match.language === 'javascript') {
-        const vm = new VM({
-          timeout: 1500,
-          sandbox: {
-            req: {
-              path: req.path,
-              method: req.method,
-              headers: req.headers,
-              query: req.query,
-              body: req.body || {},
-            },
-            res,
-            console,
-            setTimeout,
-            fetch: globalThis.fetch,
-            uuid: uuidv4,
-            helpers: {
-              sayHello: () => 'Hello from helper!',
-              sum: (a: number, b: number) => a + b,
-            },
-            db: {
-              find: () => [{ id: 1, name: 'Test Record' }],
-              insert: (doc: any) => ({ insertedId: uuidv4(), ...doc }),
-              update: (id: string, changes: any) => ({ id, ...changes }),
-            },
-          },
-        });
+      let safeBody = req.body;
+      if (typeof safeBody === 'string') {
+        try {
+          safeBody = JSON.parse(safeBody);
+        } catch {
+          throw new HttpException('Invalid JSON body', HttpStatus.BAD_REQUEST);
+        }
+      }
 
-        const wrappedCode = `(async () => {\n${match.code}\n})()`;
+      if (match.language === 'javascript') {
+        const sandbox: any = {
+          req: {
+            path: req.path,
+            method: req.method,
+            headers: req.headers,
+            query: req.query,
+            body: safeBody || {},
+          },
+          res,
+          console,
+          setTimeout,
+          fetch: globalThis.fetch,
+          uuid: uuidv4,
+          helpers: {
+            sayHello: () => 'Hello from helper!',
+            sum: (a: number, b: number) => a + b,
+          },
+          db: {
+            find: () => [{ id: 1, name: 'Test Record' }],
+            insert: (doc: any) => ({ insertedId: uuidv4(), ...doc }),
+            update: (id: string, changes: any) => ({ id, ...changes }),
+          },
+        };
+
+        const vm = new VM({ timeout: 1500, sandbox });
+
+        const wrappedCode = `
+          const handler = ${match.code};
+          handler(req);
+        `;
+
         const result = vm.run(wrappedCode);
 
         if (result instanceof Promise) {

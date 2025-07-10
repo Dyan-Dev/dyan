@@ -1,19 +1,35 @@
 import { useEffect, useState } from "react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Label } from "../components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { 
-  Save, 
-  Play, 
-  LogOut, 
-  Code2, 
-  Globe, 
-  Settings, 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
+import {
+  Save,
+  Play,
+  LogOut,
+  Code2,
+  Globe,
+  Settings,
   Zap,
   CheckCircle,
   Clock,
@@ -22,7 +38,7 @@ import SavedEndpointsSidebar from "../components/SavedEndpointsSidebar";
 import type { Endpoint } from "../components/SavedEndpointsSidebar";
 import Editor from "@monaco-editor/react";
 import { LiveIOPanel } from "../components/LiveIOPanel";
-import { boilerplate } from "../lib/utils";
+import { boilerplate, validateJS } from "../lib/utils";
 
 export default function BuilderPage() {
   const [path, setPath] = useState("/api/hello");
@@ -61,13 +77,21 @@ export default function BuilderPage() {
   }, []);
 
   const handleSave = async () => {
+    const jsCheck = validateJS(code);
+    if (!jsCheck.valid) {
+      alert(`Syntax Error: ${jsCheck.error}`);
+      setIsSaving(false);
+      return;
+    }
+
     setIsSaving(true);
     try {
       const normalizedPath = path.replace(/^\/api/, "");
 
       const existing = endpoints.find(
         (ep) =>
-          ep.path.replace(/^\/api/, "") === normalizedPath && ep.method === method
+          ep.path.replace(/^\/api/, "") === normalizedPath &&
+          ep.method === method
       );
 
       const methodType = existing ? "PUT" : "POST";
@@ -80,7 +104,7 @@ export default function BuilderPage() {
       });
 
       await res.json();
-      
+
       const newEp = { path, method, language };
 
       setEndpoints((prev) => {
@@ -158,17 +182,28 @@ export default function BuilderPage() {
     setIsTesting(true);
     setTestResponse(null);
 
+    const jsCheck = validateJS(code);
+    if (!jsCheck.valid) {
+      setTestResponse(`Syntax Error: ${jsCheck.error}`);
+      setIsTesting(false);
+      return;
+    }
+
+    const parsedBody = JSON.parse(liveBody);
+    const parsedQuery = JSON.parse(liveQuery);
+    const parsedHeaders = JSON.parse(liveHeaders);
+
     try {
-      const queryParams = new URLSearchParams(JSON.parse(liveQuery)).toString();
+      const queryParams = new URLSearchParams(parsedQuery).toString();
       const targetUrl = `http://localhost:3000${path}${queryParams ? `?${queryParams}` : ""}`;
 
       const res = await fetch(targetUrl, {
         method,
         headers: {
           "Content-Type": "application/json",
-          ...JSON.parse(liveHeaders),
+          ...parsedHeaders,
         },
-        body: method === "GET" ? undefined : liveBody,
+        body: method === "GET" ? undefined : JSON.stringify(parsedBody),
       });
 
       const text = await res.text();
@@ -199,11 +234,16 @@ export default function BuilderPage() {
 
   const getMethodColor = (method: string) => {
     switch (method) {
-      case "GET": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "POST": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "PUT": return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300";
-      case "DELETE": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
-      default: return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+      case "GET":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+      case "POST":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+      case "PUT":
+        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300";
+      case "DELETE":
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
     }
   };
 
@@ -240,7 +280,7 @@ export default function BuilderPage() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Button
                   onClick={handleTest}
@@ -256,7 +296,7 @@ export default function BuilderPage() {
                   )}
                   {isTesting ? "Testing..." : "Test"}
                 </Button>
-                
+
                 <Button
                   onClick={handleSave}
                   size="sm"
@@ -270,12 +310,12 @@ export default function BuilderPage() {
                   )}
                   {isSaving ? "Saving..." : "Save"}
                 </Button>
-                
+
                 <Separator orientation="vertical" className="h-6" />
-                
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleLogout}
                   className="gap-2 text-slate-600 dark:text-slate-400"
                 >
@@ -307,7 +347,10 @@ export default function BuilderPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="path" className="text-sm font-medium flex items-center gap-2">
+                  <Label
+                    htmlFor="path"
+                    className="text-sm font-medium flex items-center gap-2"
+                  >
                     <Globe className="w-4 h-4" />
                     Endpoint Path
                   </Label>
@@ -337,8 +380,8 @@ export default function BuilderPage() {
 
                 <div className="space-y-2">
                   <Label className="text-sm font-medium">Language</Label>
-                  <Select 
-                    value={language} 
+                  <Select
+                    value={language}
                     onValueChange={(value: "javascript" | "python") => {
                       setLanguage(value);
                       setCode(boilerplate(value));
@@ -379,7 +422,7 @@ export default function BuilderPage() {
                     scrollBeyondLastLine: false,
                     fontSize: 14,
                     lineHeight: 1.6,
-                    padding: { top: 16, bottom: 16 }
+                    padding: { top: 16, bottom: 16 },
                   }}
                 />
               </div>
@@ -400,10 +443,12 @@ export default function BuilderPage() {
                   <TabsTrigger value="input">Request Input</TabsTrigger>
                   <TabsTrigger value="response">Response Output</TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent value="input" className="space-y-4">
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">Request Configuration</Label>
+                    <Label className="text-sm font-medium mb-2 block">
+                      Request Configuration
+                    </Label>
                     <LiveIOPanel
                       onChange={({ body, headers, query }) => {
                         setLiveBody(body);
@@ -413,7 +458,7 @@ export default function BuilderPage() {
                     />
                   </div>
                 </TabsContent>
-                
+
                 <TabsContent value="response" className="space-y-4">
                   <div>
                     <div className="flex items-center justify-between mb-2">
@@ -434,9 +479,9 @@ export default function BuilderPage() {
                     <div className="bg-slate-900 text-green-400 font-mono text-sm p-4 rounded-lg min-h-[150px] max-h-[400px] overflow-auto border border-slate-700">
                       {isTesting
                         ? "🔄 Executing request..."
-                        : testResponse 
-                        ? testResponse
-                        : "💡 Click 'Test' to see the response output here"}
+                        : testResponse
+                          ? testResponse
+                          : "💡 Click 'Test' to see the response output here"}
                     </div>
                   </div>
                 </TabsContent>

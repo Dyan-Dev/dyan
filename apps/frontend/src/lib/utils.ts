@@ -19,3 +19,13 @@ res.send("Python coming soon!")`,
   };
   return boilerplate[language];
 }
+
+export const validateJS = (code: string) => {
+  try {
+    // Wrap in function for validation, returns a function or throws
+    new Function(`return (${code})`);
+    return { valid: true };
+  } catch (e: any) {
+    return { valid: false, error: e.message };
+  }
+};
