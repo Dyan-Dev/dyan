@@ -12,6 +12,7 @@
 <p align="center">
   <a href="https://github.com/dyan-dev/dyan/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <img src="https://img.shields.io/badge/version-0.1.0-yellow.svg" />
+   <a href="https://discord.gg/ZQ4pKRA7"><img src="https://img.shields.io/discord/1393842142740349069?label=Discord&logo=discord&style=flat" /></a>
 </p>
 
 ---
