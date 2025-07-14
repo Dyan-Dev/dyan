@@ -19,14 +19,13 @@ import {
 } from "lucide-react";
 
 interface Props {
+  body: string;
+  headers: string;
+  query: string;
   onChange: (data: { body: string; headers: string; query: string }) => void;
 }
 
-export function LiveIOPanel({ onChange }: Props) {
-  const [body, setBody] = useState("{}");
-  const [headers, setHeaders] = useState("{}");
-  const [query, setQuery] = useState("{}");
-
+export function LiveIOPanel({ body, headers, query, onChange }: Props) {
   const [bodyValid, setBodyValid] = useState(true);
   const [headersValid, setHeadersValid] = useState(true);
   const [queryValid, setQueryValid] = useState(true);
@@ -40,26 +39,19 @@ export function LiveIOPanel({ onChange }: Props) {
     }
   };
 
-  const handleChange = () => {
-    onChange({ body, headers, query });
-  };
-
   const handleBodyChange = (value: string) => {
-    setBody(value);
     setBodyValid(validateJSON(value));
-    handleChange();
+    onChange({ body: value, headers, query });
   };
 
   const handleHeadersChange = (value: string) => {
-    setHeaders(value);
     setHeadersValid(validateJSON(value));
-    handleChange();
+    onChange({ body, headers: value, query });
   };
 
   const handleQueryChange = (value: string) => {
-    setQuery(value);
     setQueryValid(validateJSON(value));
-    handleChange();
+    onChange({ body, headers, query: value });
   };
 
   const getValidationIcon = (isValid: boolean) => {
