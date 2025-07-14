@@ -28,6 +28,14 @@
 
 ---
 
+## 🎥 Demo Video
+
+[![Watch the demo](https://img.youtube.com/vi/SBEPacMgpvk/maxresdefault.jpg)](https://www.youtube.com/watch?v=SBEPacMgpvk)
+
+> Watch how Dyan lets you build, test, and run APIs in seconds with no backend boilerplate.
+
+---
+
 ## 📦 Architecture
 
 - **Frontend**: React + Tailwind CSS
