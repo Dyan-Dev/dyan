@@ -450,6 +450,9 @@ export default function BuilderPage() {
                       Request Configuration
                     </Label>
                     <LiveIOPanel
+                      body={liveBody}
+                      headers={liveHeaders}
+                      query={liveQuery}
                       onChange={({ body, headers, query }) => {
                         setLiveBody(body);
                         setLiveHeaders(headers);
