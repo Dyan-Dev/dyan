@@ -5,25 +5,26 @@
 <h1 align="center">Dyan</h1>
 
 <p align="center">
-  <b>Visually build, test, and export blazing-fast REST APIs from any database</b><br />
+  <b>Visually build, test, and deploy REST APIs without backend boilerplate</b><br />
   <a href="https://dyan.live">🌐 dyan.live</a>
 </p>
 
 <p align="center">
   <a href="https://github.com/dyan-dev/dyan/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <img src="https://img.shields.io/badge/version-0.1.0-yellow.svg" />
-   <a href="https://discord.gg/ZQ4pKRA7"><img src="https://img.shields.io/discord/1393842142740349069?label=Discord&logo=discord&style=flat" /></a>
+  <a href="https://discord.gg/ZQ4pKRA7"><img src="https://img.shields.io/discord/1393842142740349069?label=Discord&logo=discord&style=flat" /></a>
 </p>
 
 ---
 
 ## 🔥 Key Features
 
-- 🧱 Visual API builder (define endpoints, methods, DB connections)
-- 🧪 In-browser logic editor (JS/Python sandbox)
-- ⚡ Instant test mode via built-in runtime
-- 🧩 Rust code generation planned for a future release
-- 📦 Self-hosted & open-source
+- 🧱 Visual REST API builder
+- ⚙️ Supports GET, POST, PUT, DELETE
+- ✍️ Write endpoint logic in JavaScript (Python support coming soon)
+- ⚡ Instant test mode with live input/output
+- 🧪 Validate logic before execution
+- 💻 Self-hosted & open-source
 
 ---
 
@@ -31,9 +32,8 @@
 
 - **Frontend**: React + Tailwind CSS
 - **Backend**: NestJS (TypeScript)
-- **Codegen**: Generates Axum (Rust) APIs from internal logic schema
-- **Database**: Any (PostgreSQL, MySQL, SQLite, etc.)
-- **Runtime Sandbox**: Runs logic safely for fast iteration
+- **Sandbox Runtime**: Secure execution via [`vm2`](https://github.com/patriksimek/vm2)
+- **Database**: Local SQLite (PostgreSQL/MySQL support planned)
 
 ---
 
@@ -45,10 +45,10 @@
 
 ## 💡 Example Use Cases
 
-- Build a CRUD API over your database in minutes
-- Define custom business logic with zero backend boilerplate
-- Export a compiled Rust microservice for production-scale traffic
-- Perfect for startups, internal tools, or edge deployments
+- Build and test REST APIs visually — no backend required
+- Quickly prototype business logic for internal tools
+- Share and collaborate on API logic
+- Host a lightweight backend API layer in seconds
 
 ---
 
@@ -56,17 +56,19 @@
 
 This is an early-stage project in active development.
 
-- ✅ Currently supports: **GET requests**
-- 🚧 Coming soon: Support for POST, PUT, DELETE, and more
-- 💡 We'd love your feedback and help shaping the roadmap!
+- ✅ Supports: GET, POST, PUT, DELETE
+- ✨ JavaScript logic + runtime
+- 🧪 Input/output testing panel
+- ⏳ Python support coming soon
+- 💬 Community contributions welcome!
 
 ---
 
 ## 🤝 Contributing
 
-We welcome issues, ideas, and contributions from the community!
+We welcome issues, feature ideas, and PRs from the community.
 
-> **Note:** The current version is limited to GET endpoints. If you'd like to help extend functionality (POST, PUT, DELETE, etc.), feel free to open a PR or issue.
+Start with [`good first issue`](https://github.com/dyan-dev/dyan/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) tags or join our [Discord](https://discord.gg/ZQ4pKRA7) to chat and collaborate.
 
 ---
 
