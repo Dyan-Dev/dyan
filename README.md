@@ -36,27 +36,68 @@
 
 ---
 
-## 📦 Architecture
+## 🚀 Getting Started
 
-- **Frontend**: React + Tailwind CSS
-- **Backend**: NestJS (TypeScript)
-- **Sandbox Runtime**: Secure execution via [`vm2`](https://github.com/patriksimek/vm2)
-- **Database**: Local SQLite (PostgreSQL/MySQL support planned)
+### 1. **Clone the repo**
+
+```bash
+git clone https://github.com/dyan-dev/dyan.git
+cd dyan
+````
+
+### 2. **Install dependencies**
+
+Make sure you have [pnpm](https://pnpm.io/) installed.
+
+```bash
+pnpm install
+```
+
+### 3. **Set up your environment**
+
+Copy and edit the environment files:
+
+```bash
+cp apps/backend/.env.example apps/backend/.env
+```
+
+To skip email sending in development, you can enable mock mode:
+
+```env
+EMAIL_MOCK=true
+```
+
+### 4. **Run backend and frontend**
+
+In the root folder, run:
+
+```bash
+# Start the frontend (localhost:5173)
+pnpm --filter frontend dev
+
+# Start the backend (localhost:3000)
+pnpm --filter backend dev
+```
+
+That's it! 🚀 Now visit [http://localhost:5173](http://localhost:5173) to start building your APIs.
 
 ---
 
-## 🚀 Getting Started (Coming Soon)
+## 📦 Architecture
 
-> Full setup instructions, Docker templates, and CLI will be available soon.
+* **Frontend**: React + Tailwind CSS
+* **Backend**: NestJS (TypeScript)
+* **Sandbox Runtime**: Secure execution via [`vm2`](https://github.com/patriksimek/vm2)
+* **Database**: Local SQLite (PostgreSQL/MySQL support planned)
 
 ---
 
 ## 💡 Example Use Cases
 
-- Build and test REST APIs visually — no backend required
-- Quickly prototype business logic for internal tools
-- Share and collaborate on API logic
-- Host a lightweight backend API layer in seconds
+* Build and test REST APIs visually — no backend required
+* Quickly prototype business logic for internal tools
+* Share and collaborate on API logic
+* Host a lightweight backend API layer in seconds
 
 ---
 
@@ -64,11 +105,11 @@
 
 This is an early-stage project in active development.
 
-- ✅ Supports: GET, POST, PUT, DELETE
-- ✨ JavaScript logic + runtime
-- 🧪 Input/output testing panel
-- ⏳ Python support coming soon
-- 💬 Community contributions welcome!
+* ✅ Supports: GET, POST, PUT, DELETE
+* ✨ JavaScript logic + runtime
+* 🧪 Input/output testing panel
+* ⏳ Python support coming soon
+* 💬 Community contributions welcome!
 
 ---
 
