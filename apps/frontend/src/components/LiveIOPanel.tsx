@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
+import jsonlint from 'jsonlint-mod'
 import {
   Tabs,
   TabsContent,
@@ -26,31 +27,42 @@ interface Props {
 }
 
 export function LiveIOPanel({ body, headers, query, onChange }: Props) {
-  const [bodyValid, setBodyValid] = useState(true);
-  const [headersValid, setHeadersValid] = useState(true);
-  const [queryValid, setQueryValid] = useState(true);
 
-  const validateJSON = (value: string): boolean => {
+  const [bodyError, setBodyError] = useState<{ error: string, line: number, column: number } | null>(null);
+  const [headersError, setHeadersError] = useState<{ error: string, line: number, column: number } | null>(null);
+  const [queryError, setQueryError] = useState<{ error: string, line: number, column: number } | null>(null);
+
+
+
+  function validateJSONWithDetails(value: string) {
     try {
-      JSON.parse(value);
-      return true;
-    } catch {
-      return false;
+      jsonlint.parse(value);
+      return { valid: true, error: null, line: null, column: null };
+    } catch (e: any) {
+      // jsonlint-mod error messages include line/column
+      return {
+        valid: false,
+        error: e.message,
+        line: e.line,
+        column: e.column,
+      };
     }
-  };
+  }
+
 
   const handleBodyChange = (value: string) => {
-    setBodyValid(validateJSON(value));
+    const result = validateJSONWithDetails(value);
+    setBodyError(result.valid ? null : result);
     onChange({ body: value, headers, query });
   };
 
   const handleHeadersChange = (value: string) => {
-    setHeadersValid(validateJSON(value));
+    setHeadersError(validateJSONWithDetails(value));
     onChange({ body, headers: value, query });
   };
 
   const handleQueryChange = (value: string) => {
-    setQueryValid(validateJSON(value));
+    setQueryError(validateJSONWithDetails(value));
     onChange({ body, headers, query: value });
   };
 
@@ -70,21 +82,21 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
             <TabsTrigger value="body" className="gap-2">
               <FileText className="w-4 h-4" />
               Body
-              {!bodyValid && (
+              {bodyError && (
                 <div className="w-2 h-2 bg-red-500 rounded-full" />
               )}
             </TabsTrigger>
             <TabsTrigger value="headers" className="gap-2">
               <Settings className="w-4 h-4" />
               Headers
-              {!headersValid && (
+              {headersError && (
                 <div className="w-2 h-2 bg-red-500 rounded-full" />
               )}
             </TabsTrigger>
             <TabsTrigger value="query" className="gap-2">
               <Search className="w-4 h-4" />
               Query
-              {!queryValid && (
+              {queryError && (
                 <div className="w-2 h-2 bg-red-500 rounded-full" />
               )}
             </TabsTrigger>
@@ -100,7 +112,7 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
                 <Badge variant="secondary" className="text-xs">
                   JSON
                 </Badge>
-                {getValidationIcon(bodyValid)}
+                {getValidationIcon(!bodyError)}
               </div>
             </div>
             <Textarea
@@ -111,10 +123,10 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
                 handleBodyChange(e.target.value);
               }}
             />
-            {!bodyValid && (
+            {bodyError && (
               <p className="text-xs text-red-500 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" />
-                Invalid JSON format
+                {bodyError.error} (Line {bodyError.line}, Column {bodyError.column})
               </p>
             )}
           </TabsContent>
@@ -129,7 +141,7 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
                 <Badge variant="secondary" className="text-xs">
                   JSON
                 </Badge>
-                {getValidationIcon(headersValid)}
+                {getValidationIcon(!headersError)}
               </div>
             </div>
             <Textarea
@@ -140,10 +152,10 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
                 handleHeadersChange(e.target.value);
               }}
             />
-            {!headersValid && (
+            {headersError && (
               <p className="text-xs text-red-500 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" />
-                Invalid JSON format
+                {headersError.error} (Line {headersError.line}, Column {headersError.column})
               </p>
             )}
           </TabsContent>
@@ -158,7 +170,7 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
                 <Badge variant="secondary" className="text-xs">
                   JSON
                 </Badge>
-                {getValidationIcon(queryValid)}
+                {getValidationIcon(!queryError)}
               </div>
             </div>
             <Textarea
@@ -169,10 +181,10 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
                 handleQueryChange(e.target.value);
               }}
             />
-            {!queryValid && (
+            {queryError && (
               <p className="text-xs text-red-500 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" />
-                Invalid JSON format
+                {queryError.error} (Line {queryError.line}, Column {queryError.column})
               </p>
             )}
           </TabsContent>
