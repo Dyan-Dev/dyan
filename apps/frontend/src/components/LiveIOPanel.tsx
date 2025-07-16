@@ -37,11 +37,10 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
   function validateJSONWithDetails(value: string) {
     try {
       jsonlint.parse(value);
-      return { valid: true, error: null, line: null, column: null };
+      return null;
     } catch (e: any) {
       // jsonlint-mod error messages include line/column
       return {
-        valid: false,
         error: e.message,
         line: e.line,
         column: e.column,
@@ -49,10 +48,8 @@ export function LiveIOPanel({ body, headers, query, onChange }: Props) {
     }
   }
 
-
   const handleBodyChange = (value: string) => {
-    const result = validateJSONWithDetails(value);
-    setBodyError(result.valid ? null : result);
+    setBodyError(validateJSONWithDetails(value));
     onChange({ body: value, headers, query });
   };
 
