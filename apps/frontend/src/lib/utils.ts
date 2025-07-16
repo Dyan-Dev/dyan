@@ -8,11 +8,13 @@ export function cn(...inputs: ClassValue[]) {
 export function boilerplate(language: "javascript" | "python") {
   const boilerplate = {
     javascript: `// Available: req, res, console, helpers
-res.json({
-  message: "Hello from Dyan!",
-  method: req.method,
-  path: req.path
-});`,
+(req) => {
+  return {
+    message: "Hello from Dyan!",
+    method: req.method,
+    path: req.path
+  }
+}`,
     python: `# Not implemented yet
 # Available: req, res
 res.send("Python coming soon!")`,
