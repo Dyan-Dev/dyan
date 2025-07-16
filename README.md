@@ -58,7 +58,7 @@ pnpm install
 Copy and edit the environment files:
 
 ```bash
-cp apps/backend/.env.example apps/backend/.env
+cp .env.example apps/backend/.env
 ```
 
 To skip email sending in development, you can enable mock mode:
@@ -76,6 +76,8 @@ In the root folder, run:
 pnpm --filter frontend dev
 
 # Start the backend (localhost:3000)
+pnpm --filter backend exec prisma generate
+pnpm --filter backend exec prisma migrate deploy
 pnpm --filter backend dev
 ```
 
