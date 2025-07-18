@@ -39,6 +39,8 @@ import type { Endpoint } from "../components/SavedEndpointsSidebar";
 import Editor from "@monaco-editor/react";
 import { LiveIOPanel } from "../components/LiveIOPanel";
 import { boilerplate, validateJS } from "../lib/utils";
+import { useTheme } from "../context/ThemeContext";
+import { Moon, Sun } from "lucide-react";
 
 export default function BuilderPage() {
   const [path, setPath] = useState("/api/hello");
@@ -59,6 +61,8 @@ export default function BuilderPage() {
   const [liveBody, setLiveBody] = useState("{}");
   const [liveHeaders, setLiveHeaders] = useState("{}");
   const [liveQuery, setLiveQuery] = useState("{}");
+
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const loadEndpoints = async () => {
@@ -321,6 +325,20 @@ export default function BuilderPage() {
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleTheme}
+                  className="text-slate-600 dark:text-slate-400"
+                  title="Toggle theme"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="w-5 h-5" />
+                  ) : (
+                    <Moon className="w-5 h-5" />
+                  )}
                 </Button>
               </div>
             </div>
