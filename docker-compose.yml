@@ -5,6 +5,11 @@ services:
       dockerfile: Dockerfile.backend
     ports:
       - "3000:3000"
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - BACKEND_PORT=3000
+    volumes:
+      - sqlite-data:/app/apps/backend/prisma
 
   frontend:
     build:
@@ -14,3 +19,6 @@ services:
       - "5173:80"
     depends_on:
       - backend
+
+volumes:
+  sqlite-data:

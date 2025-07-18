@@ -60,10 +60,12 @@ export default function BuilderPage() {
   const [liveHeaders, setLiveHeaders] = useState("{}");
   const [liveQuery, setLiveQuery] = useState("{}");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const loadEndpoints = async () => {
       try {
-        const res = await fetch("http://localhost:3000/dyan/endpoints", {
+        const res = await fetch(`${apiUrl}/dyan/endpoints`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -96,7 +98,7 @@ export default function BuilderPage() {
 
       const methodType = existing ? "PUT" : "POST";
 
-      const res = await fetch("http://localhost:3000/dyan/endpoint", {
+      const res = await fetch(`${apiUrl}/dyan/endpoint`, {
         method: methodType,
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -135,7 +137,7 @@ export default function BuilderPage() {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/dyan/endpoint?path=${encodeURIComponent(ep.path)}&method=${ep.method}`,
+        `${apiUrl}/dyan/endpoint?path=${encodeURIComponent(ep.path)}&method=${ep.method}`,
         {
           credentials: "include",
         }
@@ -152,7 +154,7 @@ export default function BuilderPage() {
     const ep = endpoints[index];
 
     try {
-      await fetch("http://localhost:3000/dyan/endpoint", {
+      await fetch(`${apiUrl}/dyan/endpoint`, {
         method: "DELETE",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -195,7 +197,7 @@ export default function BuilderPage() {
 
     try {
       const queryParams = new URLSearchParams(parsedQuery).toString();
-      const targetUrl = `http://localhost:3000${path}${queryParams ? `?${queryParams}` : ""}`;
+      const targetUrl = `${apiUrl}${path}${queryParams ? `?${queryParams}` : ""}`;
 
       const res = await fetch(targetUrl, {
         method,
@@ -222,7 +224,7 @@ export default function BuilderPage() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3000/dyan/auth/logout", {
+      await fetch(`${apiUrl}/dyan/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

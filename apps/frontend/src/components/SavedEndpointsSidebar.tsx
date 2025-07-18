@@ -1,13 +1,13 @@
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { ScrollArea } from "../components/ui/scroll-area";
-import { Separator } from "../components/ui/separator";
+// import { Separator } from "../components/ui/separator";
 import {
   PlusCircle,
   Pencil,
   Trash2,
   Settings,
-  Code2,
+  // Code2,
   Layers,
   Globe,
 } from "lucide-react";

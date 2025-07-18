@@ -5,9 +5,10 @@ import BuilderPage from "./builder";
 export default function MainPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    fetch("http://localhost:3000/dyan/auth/me", {
+    fetch(`${apiUrl}/dyan/auth/me`, {
       credentials: "include",
     })
       .then((res) => {

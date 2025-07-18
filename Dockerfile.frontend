@@ -8,7 +8,6 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 RUN pnpm install --frozen-lockfile
 
-WORKDIR /app/apps/frontend
 
 RUN pnpm build
 

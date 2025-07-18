@@ -73,7 +73,21 @@ async me(@Req() req: Request) {
       });
     }
 
-    return this.authService.sendMagicLink(email);
+     // Generate the magic link (modify sendMagicLink to return the link)
+  // const magicLink = await this.authService.sendMagicLink(email);
+  const mockMode = process.env.MOCK_EMAIL_ENABLED === 'true';
+  const magicLink = await this.authService.sendMagicLink(email, mockMode);
+
+  // Check the environment variable
+  if (process.env.MOCK_EMAIL_ENABLED === 'true') {
+    console.log(`\n=== MOCK LOGIN LINK ===\n${magicLink}\n======================\n`);
+    return { message: 'Mock login link printed to console.' };
+  }
+
+  // Otherwise, proceed as normal (send email)
+  return { message: 'Login link sent to email.' };
+
+    // return this.authService.sendMagicLink(email);
   }
 
   @Get('verify')
