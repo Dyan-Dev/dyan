@@ -27,6 +27,8 @@ export class EndpointController {
         path: true,
         method: true,
         language: true,
+        createdAt:true,
+        updatedAt:true
       },
     });
     return endpoints;
