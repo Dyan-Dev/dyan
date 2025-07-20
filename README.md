@@ -45,11 +45,68 @@
 
 ---
 
-## 🚀 Getting Started (Coming Soon)
+# 🚀 Getting Started 
 
-> Full setup instructions, Docker templates, and CLI will be available soon.
 
----
+
+## 🐳 Docker & Production Deployment
+
+Dyan ships with a production-ready Docker Compose setup that runs the backend, frontend, and SQLite database with a single command.
+
+### 1. Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/) installed
+
+### 2. Environment Variables
+
+Create a `.env` file in the project root (same directory as `docker-compose.yml`) with the following content:
+
+```env
+# .env
+JWT_SECRET=your_super_secret_jwt_key
+VITE_API_URL=http://backend:3000
+```
+
+- `JWT_SECRET` is required for backend authentication.
+- `VITE_API_URL` should point to the backend service as seen by the frontend container (use `http://backend:3000` for Docker Compose).
+
+You can also refer to `apps/backend/example.env` and `apps/frontend/example.env` for more details.
+
+### 3. Build & Run
+
+From the project root, run:
+
+```bash
+docker compose up --build
+```
+
+- The backend will be available at [http://localhost:3000](http://localhost:3000)
+- The frontend will be available at [http://localhost:5173](http://localhost:5173)
+
+### 4. Data Persistence
+
+- The SQLite database is persisted in a Docker volume (`sqlite-data`), so your data survives container restarts.
+
+### 5. Customization
+
+- To change ports or add environment variables, edit `docker-compose.yml`.
+- For production, consider setting up HTTPS and using a production-grade database.
+
+### 6. Stopping & Cleaning Up
+
+To stop the services:
+
+```bash
+docker compose down
+```
+
+To remove all data (including the SQLite database):
+
+```bash
+docker compose down -v
+```
+
+
 
 ## 💡 Example Use Cases
 
