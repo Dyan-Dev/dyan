@@ -31,7 +31,7 @@ export class AuthService {
 
     // 💡 Check for mock mode
     if (process.env.MOCK_EMAIL_ENABLED === 'true') {
-      console.log(`🧪 Mock login link: ${loginUrl}`);
+      console.log(`\n=== MOCK LOGIN LINK ===\n${loginUrl}\n======================\n`);
       return { message: 'Login link logged in console (dev mode).' };
     }
 

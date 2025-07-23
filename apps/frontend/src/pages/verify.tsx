@@ -9,6 +9,7 @@ export default function VerifyPage() {
   );
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const verify = async () => {
@@ -19,12 +20,9 @@ export default function VerifyPage() {
       }
 
       try {
-        const res = await fetch(
-          `http://localhost:3000/dyan/auth/verify?token=${token}`,
-          {
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`${apiUrl}/dyan/auth/verify?token=${token}`, {
+          credentials: "include",
+        });
         if (res.ok) {
           setStatus("success");
           setTimeout(() => navigate("/"), 1500);

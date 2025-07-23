@@ -5,6 +5,10 @@ services:
       dockerfile: Dockerfile.backend
     ports:
       - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - sqlite-data:/app/apps/backend/prisma
 
   frontend:
     build:
@@ -12,5 +16,10 @@ services:
       dockerfile: Dockerfile.frontend
     ports:
       - "5173:80"
+    env_file:
+      - .env
     depends_on:
       - backend
+
+volumes:
+  sqlite-data:

@@ -38,39 +38,78 @@
 
 ## 🚀 Getting Started
 
-### 1. **Clone the repo**
+Choose your preferred setup method:
 
+### Option 1: 🐳 Docker (Recommended)
+
+The fastest way to get Dyan running with production-ready containers.
+
+#### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/) installed
+
+#### 1. Clone the repo
 ```bash
 git clone https://github.com/dyan-dev/dyan.git
 cd dyan
-````
+```
 
-### 2. **Install dependencies**
+#### 2. Set up environment variables
+Create a `.env` file in the project root:
+```bash
+# .env
+JWT_SECRET=your_super_secret_jwt_key
+VITE_API_URL=http://backend:3000
+```
 
+#### 3. Build and run
+```bash
+docker compose up --build
+```
+
+That's it! 🚀 Visit [http://localhost:5173](http://localhost:5173) to start building your APIs.
+
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **Backend**: [http://localhost:3000](http://localhost:3000)
+- **Data**: Persisted in Docker volume (survives restarts)
+
+#### Managing Docker setup
+```bash
+# Stop services
+docker compose down
+
+# Remove all data (including database)
+docker compose down -v
+```
+
+### Option 2: 🛠️ Local Development
+
+For contributors or those who want to modify the source code.
+
+#### 1. Clone the repo
+```bash
+git clone https://github.com/dyan-dev/dyan.git
+cd dyan
+```
+
+#### 2. Install dependencies
 Make sure you have [pnpm](https://pnpm.io/) installed.
-
 ```bash
 pnpm install
 ```
 
-### 3. **Set up your environment**
-
-Copy and edit the environment files:
-
+#### 3. Set up your environment
 ```bash
-cp .env.example apps/backend/.env
+cp .env.example .env
 ```
 
-To skip email sending in development, you can enable mock mode:
-
+To skip email sending in development:
 ```env
 EMAIL_MOCK=true
 ```
+Note: The magic link will be printed on console of backend.
 
-### 4. **Run backend and frontend**
-
+#### 4. Run backend and frontend
 In the root folder, run:
-
 ```bash
 # Start the frontend (localhost:5173)
 pnpm --filter frontend dev
@@ -81,7 +120,7 @@ pnpm --filter backend exec prisma migrate deploy
 pnpm --filter backend dev
 ```
 
-That's it! 🚀 Now visit [http://localhost:5173](http://localhost:5173) to start building your APIs.
+Visit [http://localhost:5173](http://localhost:5173) to start building your APIs.
 
 ---
 
