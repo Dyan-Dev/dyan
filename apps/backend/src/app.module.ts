@@ -1,4 +1,3 @@
-// apps/backend/src/app.module.ts
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,7 +6,9 @@ import { DynamicController } from './dynamic/dynamic.controller';
 import { AuthModule } from './auth/auth.module';
 import { JwtMiddleware } from './auth/jwt.middleware';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core'; // 👈 needed for global guard
 
 @Module({
   imports: [
@@ -21,10 +22,24 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       })(),
       signOptions: { expiresIn: '10m' },
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60,   // TTL in seconds or milliseconds depending on version
+          limit: 5,
+        },
+      ],
+    }),
     AuthModule,
   ],
   controllers: [AppController, EndpointController, DynamicController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard, // 👈 this applies throttling globally
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
