@@ -10,8 +10,6 @@ RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/apps/backend
 
-COPY apps/backend/.env .env
-
 RUN pnpm --filter backend exec prisma generate
 RUN pnpm --filter backend exec prisma migrate deploy
 

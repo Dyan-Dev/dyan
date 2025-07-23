@@ -13,12 +13,14 @@ export default function LoginPage() {
   );
   const [errorMessage, setErrorMessage] = useState("");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const requestLogin = async () => {
     setStatus("loading");
     setErrorMessage("");
 
     try {
-      const res = await fetch("http://localhost:3000/dyan/auth/request", {
+      const res = await fetch(`${apiUrl}/dyan/auth/request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
